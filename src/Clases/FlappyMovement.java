@@ -2,6 +2,7 @@ package Clases;
 
 import Interfaz.Game;
 
+//Hola
 public class FlappyMovement extends Thread {
 
     private int deltaTime;
@@ -11,6 +12,11 @@ public class FlappyMovement extends Thread {
     private boolean jumping = false;
     private final Game parent;
     public static boolean stopThread;
+    private double timeInit;
+    private int yInit= 0;
+    private static final int v0 = -40;
+    private static final int ACCELERATION = 9;
+    private static final int TIME_FLAPPING = 5;
 
     public FlappyMovement(Game parent) {
         this.deltaTime = 10;
@@ -19,102 +25,35 @@ public class FlappyMovement extends Thread {
 
     @Override
     public void run() {
-        int varA = 1;
         stopThread = false;
+        int x = Game.jFlappy.getLocation().x;
+        yInit = Game.jFlappy.getLocation().y;
+        timeInit = System.currentTimeMillis();
+
         while (true) {
             if (stopThread) {
                 break;
             }
-            int x = Game.jFlappy.getLocation().x;
-            if (!isJump()) {
-                int y = Game.jFlappy.getLocation().y;
-                try {
-                    Thread.sleep(getDeltaTime());
-                    Game.jFlappy.setLocation(x, (y + 1));
-                    if (deltaTime > 3) {
-                        if (varA % 15 == 0) {
-                            deltaTime = deltaTime - 1;
-                        }
-                        varA = varA + 1;
-                    }
-                    parent.validarChoqueTubos();
-                } catch (InterruptedException e) {
-                    System.out.println("Ocurrio un problema " + e);
-                }
-            } else {
-                if (!jumping) {
-                    setStopJump1(false);
-                    setStopJump2(true);
-                    jumping = true;
-                    jump1();
-                } else {
-                    setStopJump1(true);
-                    setStopJump2(false);
-                    jumping = false;
-                    jump2();
-                }
+            if(jump){
+                jump = false;
+                jump();
             }
-            this.parent.detectColision();
+            double time =(double) ((System.currentTimeMillis() - timeInit)/100f);
+            int y = (int)(yInit + v0  + 0.5 * ACCELERATION * time * time);
+            
+            Game.jFlappy.setLocation(x, y);
+            
+            System.out.println(y);
         }
     }
 
-    private void jump1() {
-        int tiempo_salto = 1;
-        while (true) {
-            int y = Game.jFlappy.getLocation().y;
-            int x = Game.jFlappy.getLocation().x;
-            try {
-                Thread.sleep(getDeltaTime());
-                if (!isStopJump1()) {
-                    tiempo_salto = tiempo_salto + 1;
-                    if (tiempo_salto <= 60) {
-                        Game.jFlappy.setLocation(x, (y - 1));
-                        if (tiempo_salto % 20 == 0) {
-                            deltaTime = deltaTime - 1;
-                        }
-                    } else if (tiempo_salto >= 70) {
-                        setJump(false);
-                        setDeltaTime(7);
-                        break;
-                    }
-                    parent.validarChoqueTubos();
-                } else {
-                    break;
-                }
-            } catch (InterruptedException e) {
-                System.out.println("Ocurrio un error " + e);
-            }
-        }
+    private void jump() {
+       timeInit  = System.currentTimeMillis();
+       yInit = Game.jFlappy.getLocation().y;
+       
     }
 
-    private void jump2() {
-        int jumpTime = 1;
-        while (true) {
-            int y = Game.jFlappy.getLocation().y;
-            int x = Game.jFlappy.getLocation().x;
-            try {
-                Thread.sleep(getDeltaTime());
-                if (!isStopJump2()) {
-                    jumpTime = jumpTime + 1;
-                    if (jumpTime <= 60) {
-                        Game.jFlappy.setLocation(x, (y - 1));
-                        if (jumpTime % 20 == 0) {
-                            deltaTime = deltaTime - 1;
-                        }
-                    } else if (jumpTime >= 70) {
-                        setJump(false);
-                        setDeltaTime(7);
-                        break;
-                    }
-                    parent.validarChoqueTubos();
-                } else {
-                    break;
-                }
-            } catch (InterruptedException e) {
-                System.out.println("Ocurrio un error " + e);
-            }
-        }
-    }
+  
 
     public boolean isStopJump1() {
         return stopJump1;
