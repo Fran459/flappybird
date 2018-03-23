@@ -216,24 +216,28 @@ public class Game extends javax.swing.JFrame {
             this.mvnt_pipes.interrupt();
             this.mvnt_flappy.setJump(false);
             start = false;
+            gameOver();
             MySound.caida();
         } else if (loclz_Flappy.x > (loclz_Tubo2.x - 32) && loclz_Flappy.x < ((loclz_Tubo2.x - 32) + 82) && loclz_Flappy.y < (loclz_Tubo2.y + 318)) {
             MySound.choque();
             this.mvnt_pipes.interrupt();
             this.mvnt_flappy.setJump(false);
             start = false;
+            gameOver();
             MySound.caida();
         } else if (loclz_Flappy.x > (loclz_Tubo3.x - 32) && loclz_Flappy.x < ((loclz_Tubo3.x - 32) + 82) && loclz_Flappy.y > (loclz_Tubo3.y - 22)) {
             MySound.choque();
             this.mvnt_pipes.interrupt();
             this.mvnt_flappy.setJump(false);
             start = false;
+            gameOver();
             MySound.caida();
         } else if (loclz_Flappy.x > (loclz_Tubo4.x - 32) && loclz_Flappy.x < ((loclz_Tubo4.x - 32) + 82) && loclz_Flappy.y > (loclz_Tubo4.y - 22)) {
             MySound.choque();
             this.mvnt_pipes.interrupt();
             this.mvnt_flappy.setJump(false);
             start = false;
+            gameOver();
             MySound.caida();
         }
     }
@@ -246,14 +250,8 @@ public class Game extends javax.swing.JFrame {
         jPipe_up2.setVisible(action);
         labelScore.setVisible(action);
     }
-
-    public synchronized void detectColision() {
-        int y = jFlappy.getLocation().y;
-        if (y == 448) {
-            if (MySound.terminochoque) {
-                MySound.choque();
-            }
-            GamerOver gamerover = new GamerOver(this, true);
+    private void gameOver(){
+        GamerOver gamerover = new GamerOver(this, true);
             try {
                 Thread thread = new Thread() {
                     @Override
@@ -267,6 +265,15 @@ public class Game extends javax.swing.JFrame {
             } catch (Exception e) {
             }
             gamerover.setVisible(true);
+    }
+
+    public synchronized void detectColision() {
+        int y = jFlappy.getLocation().y;
+        if (y >= 448 || y<=0) {
+            if (MySound.terminochoque) {
+                MySound.choque();
+            }
+            gameOver();
         }
     }
 

@@ -14,7 +14,7 @@ public class FlappyMovement extends Thread {
     public static boolean stopThread;
     private double timeInit;
     private int yInit= 0;
-    private static final int v0 = -40;
+    private static final int v0 = -30;
     private static final int ACCELERATION = 9;
     private static final int TIME_FLAPPING = 5;
 
@@ -42,7 +42,8 @@ public class FlappyMovement extends Thread {
             int y = (int)(yInit + v0  + 0.5 * ACCELERATION * time * time);
             
             Game.jFlappy.setLocation(x, y);
-            
+            parent.validarChoqueTubos();
+            parent.detectColision();
             System.out.println(y);
         }
     }
